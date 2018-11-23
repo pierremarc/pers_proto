@@ -4,23 +4,21 @@ from django.core.serializers import serialize
 from rest_framework import viewsets, serializers
 
 from .serializers import *
-from .models import *
+from .models.project import *
+from .models.types import (
+    Point,
+    Polygon,
+)
 
 
-# ViewSets define the view behavior.
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
 
-class ProcessViewSet(viewsets.ModelViewSet):
-    queryset = Process.objects.all()
-    serializer_class = ProcessSerializer
-
-
-class ProcessItemViewSet(viewsets.ModelViewSet):
-    queryset = ProcessItem.objects.all()
-    serializer_class = ProcessItemSerializer
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = ContactRef.objects.all()
+    serializer_class = ContactSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -34,7 +32,7 @@ def reg_type(router, M):
     class S(serializers.HyperlinkedModelSerializer):
         class Meta:
             model = M
-            fields = ('id', 'value', 'user', 'pid', 'created_at', 'updated_at')
+            fields = ('id', 'value', 'user', 'project', 'created_at', 'parent')
 
         def create(self, validated_data):
             request = self.context['request']
@@ -70,20 +68,23 @@ class GeoAcc:
         return dict(type="FeatureCollection", features=self.features)
 
 
-def get_project_point(request):
+def get_project_point(request, fields):
     geo_acc = GeoAcc("Point")
+    field_names = fields.split('/')
+    ser = project_ser(field_names)
     for p in Point.objects.all():
-        project_ser = ProjectSerializer(
-            instance=p.pid, context={'request': request})
-        geo_acc.push(p.value.coords, dict(project=project_ser.data))
+        ps = ser(instance=p.project, context={'request': request})
+        geo_acc.push(p.value.coords, ps.data)
 
     return JsonResponse(geo_acc.geojson())
 
-def get_project_polygon(request):
+
+def get_project_polygon(request, fields):
     geo_acc = GeoAcc("Polygon")
+    field_names = fields.split('/')
+    ser = project_ser(field_names)
     for p in Polygon.objects.all():
-        project_ser = ProjectSerializer(
-            instance=p.pid, context={'request': request})
-        geo_acc.push(p.value.coords, dict(project=project_ser.data))
+        ps = ser(instance=p.project, context={'request': request})
+        geo_acc.push(p.value.coords, ps.data)
 
     return JsonResponse(geo_acc.geojson())
