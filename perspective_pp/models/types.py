@@ -65,56 +65,24 @@ Contact = make_type('Contact',m.ForeignKey(ContactRef, on_delete=m.CASCADE))
 
 # ## bma
 
-# class Year(T):
-#     value = m.IntegerField()
+Year = make_type('Year', m.IntegerField())
 
-# class InOut(T):
-#     A = 'i'
-#     B = 'o'
-#     CHOICES = (
-#         (A, 'In'),
-#         (B, 'Out'),
-#     )
-#     value = m.CharField(max_length=1, choices=CHOICES)
+InOut_CHOICES = (('i', 'In'), ('o', 'Out'),)
+InOut = make_type('InOut', 
+    m.CharField(max_length=1, choices=InOut_CHOICES))
 
-# class PubPriv(T):
-#     A = 'u'
-#     B = 'r'
-#     CHOICES = (
-#         (A, 'Public'),
-#         (B, 'Private'),
-#     )
-#     value = m.CharField(max_length=1, choices=CHOICES)
+PubPriv_CHOICES = (('u', 'Public'),('r', 'Private'),)
+PubPriv = make_type('PubPriv', m.CharField(max_length=1, choices=PubPriv_CHOICES))
 
-# class Rdb(T):
-#     A = 'n'
-#     B = 'j'
-#     C = 'g'
-#     CHOICES = (
-#         (A, 'No'),
-#         (B, 'Ju'),
-#         (C, 'Ge'),
-#     )
-#     value = m.CharField(max_length=1, choices=CHOICES)
+Rdb_CHOICES = (('n', 'No'),('j', 'Ju'),('g', 'Ge'),)
+Rdb = make_type('Rdb', m.CharField(max_length=1, choices=Rdb_CHOICES))
 
-
-# class ProjectType(T):
-#     value = m.ForeignKey(TypeRef, on_delete=m.CASCADE)
-
-# class MoGo(T):
-#     value = m.ForeignKey(ContactRef, on_delete=m.CASCADE)
-
-# class Program(T):
-#     value = m.ForeignKey(ProgramRef, on_delete=m.CASCADE)
-
-# class Description(T):
-#     value = m.TextField()
-
-# class Manager(T):
-#     value = m.ForeignKey(User, on_delete=m.CASCADE)
-
-# class Process(T):
-#     value = m.ForeignKey(ProcessRef, on_delete=m.CASCADE)
+ProjectType = make_type('ProjectType', m.ForeignKey(TypeRef, on_delete=m.CASCADE))
+MoGo = make_type('MoGo', m.ForeignKey(ContactRef, on_delete=m.CASCADE))
+Program = make_type('Program', m.ForeignKey(ProgramRef, on_delete=m.CASCADE))
+Description = make_type('Description', m.TextField())
+Manager = make_type('Manager', m.ForeignKey(User, on_delete=m.CASCADE, related_name='+'))
+Process = make_type('Process', m.ForeignKey(ProcessRef, on_delete=m.CASCADE))
 
 # class FeeType(T):
 #     A = 'a'
